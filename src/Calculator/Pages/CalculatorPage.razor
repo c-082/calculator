@@ -1,0 +1,109 @@
+﻿@page "/calculator"
+@using NCalc
+
+<PageTitle>Calculator</PageTitle>
+
+<h1>Calculator</h1>
+
+<div>
+    <input class="@resultCssClass" value="@number" readonly />
+</div>
+    
+<div class="grid">
+    <div>
+        <button class="btn btn-danger" @onclick="ClearAll">AC</button>
+        <button class="btn btn-warning" @onclick="Clear">&LeftArrowBar;</button>
+        <button class="btn btn-info" @onclick="() => Append('(')">(</button>
+        <button class="btn btn-info" @onclick="() => Append(')')">)</button>
+    </div>
+    <div>
+        <button class="btn btn-secondary" @onclick="() => Append('7')">7</button>
+        <button class="btn btn-secondary" @onclick="() => Append('8')">8</button>
+        <button class="btn btn-secondary" @onclick="() => Append('9')">9</button>
+        <button class="btn btn-info" @onclick="() => Append('/')">&div;</button>
+    </div>
+    <div>
+        <button class="btn btn-secondary" @onclick="() => Append('4')">4</button>
+        <button class="btn btn-secondary" @onclick="() => Append('5')">5</button>
+        <button class="btn btn-secondary" @onclick="() => Append('6')">6</button>
+        <button class="btn btn-info" @onclick="() => Append('*')">&Cross;</button>
+    </div>
+    <div>
+        <button class="btn btn-secondary" @onclick="() => Append('1')">1</button>
+        <button class="btn btn-secondary" @onclick="() => Append('2')">2</button>
+        <button class="btn btn-secondary" @onclick="() => Append('3')">3</button>
+        <button class="btn btn-info" @onclick="() => Append('+')">+</button>
+    </div>
+    <div>
+        <button class="btn btn-info" @onclick="() => Append('.')">.</button>
+        <button class="btn btn-secondary" @onclick="() => Append('0')">0</button>
+        <button class="btn btn-primary" @onclick="Calculate">=</button>
+        <button class="btn btn-info" @onclick="() => Append('-')">-</button>
+    </div>
+</div>
+
+<p class="validation-message">@errorMessage</p>
+
+@code {
+    private static readonly string operators = "+-*/";
+    private string? resultCssClass = null;
+    private string number = "0";
+    private string expression = "";
+    private string errorMessage = "";
+    private void Append(char digit)
+    {
+        if (operators.Contains(digit))
+        {
+            if (expression == "" || operators.Contains(expression[^1]))
+            {
+                return;
+            }
+            number = "";
+        }
+        else if (number is ("0" or "Error!"))
+        {
+            number = digit.ToString();
+        }
+        else
+        {
+            number += digit;
+        }
+        expression += digit;
+    }
+    private void Clear()
+    {
+        if (number.Length == 1)
+        {
+            number = "0";
+            expression = "";
+        }
+        else
+        {
+            number = number.Substring(0, number.Length - 1);
+            expression = expression.Substring(0, expression.Length - 1);
+        }
+    }
+    private void ClearAll() => number = expression = "0";
+    private void Calculate()
+    {
+        try
+        {
+            var exp = new Expression(expression);
+            var result = exp.Evaluate();
+
+            number = result?.ToString() ?? "0";
+        }
+        catch (Exception e)
+        {
+            number = "Error!";
+            errorMessage = e.Message;
+        }
+        finally
+        {
+            if (number != "Error!")
+            {
+                expression = number;
+            }
+        }
+    }
+}
