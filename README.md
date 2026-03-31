@@ -1,5 +1,7 @@
 # 🧮 Blazor Calculator
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Deploy Blazor WASM](https://github.com/c-082/calculator/actions/workflows/deploy.yml/badge.svg)](https://github.com/c-082/calculator/actions/workflows/deploy.yml)
+
 A calculator built using Blazor WebAssembly.  
 It supports basic arithmetic operations and evaluates full expressions like `2+3*5`.
 
